@@ -10,29 +10,33 @@
 
 #include "LexerTypes.h"
 #include <cassert>
+#include <vector>
 
 namespace Lexer {
 
-class CharSet {
+class CharSet final{
 public:
-	CharSet();
-	virtual ~CharSet() = 0;
+	~CharSet() {};
 
-	virtual bool has(Char c) = 0;
+	bool has(Char c) const;
+
+	static CharSet make(Char c);
+	static CharSet make(Char c0,Char c1);
+private:
+	typedef std::pair<Char,Char> CP;
+	typedef std::vector<CP>      CPV;
+	CPV r;
+	friend CharSet operator+(const CharSet& s0,const CharSet& s1); //set union
+
+
+	CharSet(Char c);
+	CharSet(Char c0,Char c1);
+	CharSet(const CPV& r);
 };
 
-class SingletonCharSet final : public CharSet{
-public:
-	SingletonCharSet(Char c) : c(c){}
-	bool has (Char k) override{return c==k;}
-	const Char c;
-};
-class RangeCharSet final : public CharSet{
-public:
-	RangeCharSet(Char c0,Char c1) : c0(c0), c1(c1){ assert(c0 <= c1);}
-	bool has (Char k) override{return k>=c0 && k<=c1;}
-	const Char c0,c1;
-};
+CharSet operator+(const CharSet& s0,const CharSet& s1); //set union
+CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
+CharSet operator*(const CharSet& s0,const CharSet& s1); //set intersection
 
 } /* namespace Lexer */
 

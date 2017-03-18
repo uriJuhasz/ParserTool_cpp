@@ -11,6 +11,7 @@
 #include "LexerTypes.h"
 #include <cassert>
 #include <vector>
+#include <utility>
 
 namespace Lexer {
 

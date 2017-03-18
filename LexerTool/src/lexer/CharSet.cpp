@@ -135,9 +135,6 @@ CharSet operator*(const CharSet& s0,const CharSet& s1){ //set intersection
 		}
 		i0++;
 	}
-
-	}
-
 	return CharSet(v);
 }
 

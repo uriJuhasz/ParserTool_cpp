@@ -12,6 +12,7 @@
 #include <cassert>
 #include <vector>
 #include <utility>
+#include <ostream>
 
 namespace Lexer {
 
@@ -21,15 +22,21 @@ public:
 
 	bool has(Char c) const;
 
-	static CharSet make(Char c);
-	static CharSet make(Char c0,Char c1);
+	static CharSet make();                //empty set
+	static CharSet make(Char c);          //singleton
+	static CharSet make(Char c0,Char c1); //inclusive range
 private:
 	typedef std::pair<Char,Char> CP;
 	typedef std::vector<CP>      CPV;
 	CPV r;
 	friend CharSet operator+(const CharSet& s0,const CharSet& s1); //set union
+	friend CharSet operator*(const CharSet& s0,const CharSet& s1); //set intersection
+	friend CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
+
+	friend std::wostream& operator<<(std::wostream&, const CharSet& s); //print
 
 
+	CharSet();
 	CharSet(Char c);
 	CharSet(Char c0,Char c1);
 	CharSet(const CPV& r);
@@ -38,6 +45,7 @@ private:
 CharSet operator+(const CharSet& s0,const CharSet& s1); //set union
 CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
 CharSet operator*(const CharSet& s0,const CharSet& s1); //set intersection
+std::wostream& operator<<(std::wostream&, const CharSet& s); //print
 
 } /* namespace Lexer */
 

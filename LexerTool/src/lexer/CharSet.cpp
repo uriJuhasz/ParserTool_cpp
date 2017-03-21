@@ -12,12 +12,13 @@
 namespace Lexer {
 
 	bool CharSet::has(Char c) const{//todo binary search
-		unsigned int i=0;
-		while (i<r.size() && c<r[i].first)
+		auto i=r.begin();
+		while (i!=r.end() && i->second<c)
 			i++;
-		return i!=r.size() && c<=r[i].second;
+		return i!=r.end() && c>=i->first && c<=i->second;
 	}
 
+	CharSet::CharSet() : CharSet(CPV()){}
 	CharSet::CharSet(Char c) : CharSet(c,c){}
 	CharSet::CharSet(Char c0,Char c1) : CharSet(CPV{CP(c0,c1)})
 	{
@@ -26,31 +27,19 @@ namespace Lexer {
 	CharSet::CharSet(const CPV& r) : r(r)
 	{
 #ifdef DEBUG
-		assert(r.size()>0);
-/*		assert(all_of(r.begin(),r.end(),[b=true,lh=r[0].first](CP cp)mutable{
-			auto t = cp.first<=cp.second && (b || lh+1<cp.first);
-			b=false;
-			return t;}));*/
-
-//		assert(all_of(r.begin(),r.end(),[](CP cp){cp.first<=cp.second;}));
-		int i=0; Char lh;
-		for (auto p : r){
-			assert (p.first<=p.second);
-			if (i>0) assert (lh+1<p.first);
-			i++; lh = p.second;
+		if (r.size()>0){
+			int i=0; Char lh;
+			for (auto p : r){
+				assert (p.first<=p.second);
+				if (i>0) assert (lh+1<p.first);
+				i++; lh = p.second;
+			}
 		}
-/*		for (auto i=0;i<r.size();i++)
-		{
-			const CP& p=r[i];
-			assert (p.first<=p.second);
-			if (i>0)
-				assert (lastHigh+1 < p.first);
-			lastHigh = p.second;
-		}*/
 #endif
 	}
 
 
+CharSet CharSet::make(){return CharSet();}
 CharSet CharSet::make(Char c){return CharSet(c);}
 CharSet CharSet::make(Char c0,Char c1){return CharSet(c0,c1);}
 
@@ -71,9 +60,9 @@ typedef std::vector<CP>      CPV;
 	it++;
 }
 */
-inline CPV::const_iterator& selectMin(const CPV& r0,const CPV& r1,CPV::const_iterator& i0,CPV::const_iterator& i1){
+inline CPV::const_iterator* selectMin(const CPV& r0,const CPV& r1,CPV::const_iterator& i0,CPV::const_iterator& i1){
 	assert(i0!=r0.end() || i1!=r1.end());
-	return (i1==r1.end() || i0->first<=i1->first) ? i0 : i1;
+	return (i1==r1.end() || i0->first<=i1->first) ? &i0 : &i1;
 }
 CharSet operator+(const CharSet& s0,const CharSet& s1){ //set union
 	const CPV& r0 = s0.r;
@@ -86,13 +75,13 @@ CharSet operator+(const CharSet& s0,const CharSet& s1){ //set union
 	while (i0!=r0.end() || i1!=r1.end()){
 		Char l,h;
 		{
-			auto& i = selectMin(r0, r1, i0, i1);
+			auto& i = *selectMin(r0, r1, i0, i1);
 			l = i->first;
 			h = i->second;
 			i++;
 		}
-		while (true){
-			auto& i = selectMin(r0, r1, i0, i1);
+		while (i0!=r0.end() || i1!=r1.end()){
+			auto& i = *selectMin(r0, r1, i0, i1);
 			if (i->first<=h+1){ //merge
 				h = max(h,i->second);
 				i++;
@@ -138,57 +127,74 @@ CharSet operator*(const CharSet& s0,const CharSet& s1){ //set intersection
 	return CharSet(v);
 }
 
-/*
+CharSet operator-(const CharSet& s0,const CharSet& s1){ //set difference
+	const CPV& r0 = s0.r;
+	const CPV& r1 = s1.r;
 
+	auto i0 = r0.begin();
+	auto i1 = r1.begin();
 
-bool unionCheckAddRange(Char& h, unsigned int& i,const CPV& r){
-	if (i<r.size() && h+1>=r[i].first)
-	{
-		h = max(h,r[i].second);
-		i++;
-		return true;
-	}
-	return false;
-}
-
-CharSet operator+(const CharSet& s0,const CharSet& s1){ //set union
 	CPV v;
-	const CPV* rs[2] = {&s0.r,&s1.r};
-	unsigned int is[2] = {0,0};
-	while (is[0]<rs[0]->size() && is[1]<rs[1]->size())
-	{
-		auto l0 = (*rs[0])[is[0]].first;
-		auto l1 = (*rs[1])[is[1]].first;
+	for (i0=r0.begin();i0!=r0.end();i0++){
+		//invariant forall j0<i0 : ((r0[j0] \setminus r1) in v)
+		//invariant i1==r1.end || forall j1<i1 : j1->second<i1->first
+		while (i1!=r1.end() && i1->second<i0->first)
+			i1++;
+		//invariant i1==r1.end || (i1->second>=i0->first && forall j1<i1 : j1->second<i1->first)
+		auto l = i0->first;
+		auto h = i0->second;
 
-		auto s = (l0<l1) ? 0 : 1;
-
-		Char l = (*rs[s])[is[s]].first;
-		Char h = (*rs[s])[is[s]].second;
-		is[s]++;
-
-		auto cont = false;
-		do {
-			cont = false;
-			for (auto k=0;k<2;k++)
-				cont |= unionCheckAddRange(h, is[k], *rs[k]);
-/ *				if (is[k]<rs[k]->size() && h+1>=(*rs[k])[is[k]].first)
-				{
-					h = max(h,(*rs[k])[is[k]].second);
-					is[k]++;
-					stop=false;
-				}* /
-		}while (cont);
-		v.push_back(CharSet::CP(l,h));
-	}
-	for (auto i=0;i<2;i++)
-		while (is[i]<rs[i]->size()){
-			v.push_back((*rs[i])[is[i]]);
-			is[i]++;
+		if (i1!=r1.end() && i1->first<=i0->first)
+		{
+			assert(i1->second>=i0->first);
+			if (i1->second>=i0->second)
+				continue;
+			assert(i1->second<i0->second);
+			l = i1->second+1;
+			i1++;
 		}
+		//invariant i1==r1.end() || i1->first>i0.first
+		assert (l<=h);
+		while (true){
+			assert (i1==r1.end() || i1->first>i0->first);
+			assert (i1==r1.end() || l<i1->first);
+			assert (i1==r1.end() || i1->first>l);
+			assert (h<=i0->second);
+			if  (i1!=r1.end() && i1->first<=i0->second){
+				h = i1->first-1;
+				assert(l<=h);
+				v.push_back(CP(l,h));
+				if (i1->second<i0->second){
+					l = i1->second+1;
+					i1++;
+				}else
+					break;
+			}else{
+				h = i0->second;
+				assert(l<=h);
+				v.push_back(CP(l,h));
+				break;
+			}
+		};
+	}
 	return CharSet(v);
 }
-*/
-CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
-CharSet operator*(const CharSet& s0,const CharSet& s1); //set intersection
+#include <ostream>
+
+std::wostream& operator<<(std::wostream& os, const CharSet& s){ //print
+	os << "{";
+	for (auto p : s.r)
+		if (p.first==p.second)
+			os << p.first;
+		else{
+			os << "[";
+			os << p.first;
+			os << "-";
+			os << p.second;
+			os << "]";
+		}
+	os << "}";
+	return os;
+}
 
 } /* namespace Lexer */

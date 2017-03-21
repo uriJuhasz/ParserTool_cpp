@@ -2,7 +2,7 @@
 #define LEXER_LEXERTYPES_H_
 
 namespace Lexer{
-	typedef wchar_t Char;
+	typedef char16_t Char;
 }
 
 #endif /* LEXER_LEXERTYPES_H_ */

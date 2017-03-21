@@ -34,6 +34,7 @@ private:
 	friend CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
 
 	friend std::wostream& operator<<(std::wostream&, const CharSet& s); //print
+	friend std::ostream& operator<<(std::ostream&, const CharSet& s); //print
 
 
 	CharSet();
@@ -46,6 +47,7 @@ CharSet operator+(const CharSet& s0,const CharSet& s1); //set union
 CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
 CharSet operator*(const CharSet& s0,const CharSet& s1); //set intersection
 std::wostream& operator<<(std::wostream&, const CharSet& s); //print
+std::ostream& operator<<(std::ostream&, const CharSet& s); //print
 
 } /* namespace Lexer */
 

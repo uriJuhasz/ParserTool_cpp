@@ -22,45 +22,45 @@ void CharSetTester::test(){
 	 std::minstd_rand0 g1 (seed);
 
 	 auto cs0 = CharSet::make();
-	 wcout << "cs0  :" << cs0 << endl;
+	 cout << "cs0  :" << cs0 << endl;
 	 auto cs1 = CharSet::make('c');
-	 wcout << "cs1  :" << cs1 << endl;
+	 cout << "cs1  :" << cs1 << endl;
 	 auto cs3 = CharSet::make('u');
-	 wcout << "cs3  :" << cs3 << endl;
+	 cout << "cs3  :" << cs3 << endl;
 	 auto cs2 = CharSet::make('a','z');
-	 wcout << "cs2  :" << cs2 << endl;
+	 cout << "cs2  :" << cs2 << endl;
 	 assert(!cs0.has('c'));
 	 assert(cs1.has('c'));
 	 assert(!cs1.has('d'));
 
 	 auto cs1u2 = cs1+cs2;
-	 wcout << "cs1u2:" << cs1u2 << endl;
+	 cout << "cs1u2:" << cs1u2 << endl;
 	 assert(cs1u2.has('c'));
 	 assert(cs1u2.has('e'));
 	 auto cs1i2 = cs1*cs2;
-	 wcout << "cs1i2:" << cs1i2 << endl;
+	 cout << "cs1i2:" << cs1i2 << endl;
 	 assert(cs1i2.has('c'));
 	 assert(!cs1i2.has('e'));
 	 auto cs2m1 = cs2-cs1;
-	 wcout << "cs2m1:" << cs2m1 << endl;
+	 cout << "cs2m1:" << cs2m1 << endl;
 	 assert(!cs2m1.has('c'));
 	 assert(cs2m1.has('e'));
 	 auto cs2m3 = cs2-cs3;
-	 wcout << "cs2m3:" << cs2m3 << endl;
+	 cout << "cs2m3:" << cs2m3 << endl;
 	 assert(cs2m3.has('c'));
 	 assert(!cs2m3.has('u'));
 	 auto cs5 = cs2m1 * cs2m3;
-	 wcout << "cs5  :" << cs5 << endl;
+	 cout << "cs5  :" << cs5 << endl;
 	 auto cs6 = cs2m1 + cs2m3;
-	 wcout << "cs6  :" << cs6 << endl;
-	 auto cs7 = CharSet::make(L'\u0370',L'\u03ff');
-	 cout << "A0:" << u8'ɵ' << endl;
-
-	 cout << "A1:" << u8'\u03B1' << endl;
-	 cout << "A2:" <<  L'\u03C9' << endl;
-	 wcout << "A3:" << u8'\u03B1' << endl;
-	 wcout << "A4:" <<  L'\u03C9' << endl;
-	 wcout << "cs7  :" << cs7 << endl;
+	 cout << "cs6  :" << cs6 << endl;
+	 auto cs7 = CharSet::make(u'\u0391',u'\u03A9');
+	 cout << "cs7  :" << cs7 << endl;
+	 auto cs8 = CharSet::make(u'\u03B1',u'\u03C9');
+	 cout << "cs8  :" << cs8 << endl;
+	 auto cs9 = CharSet::make(u'δ',u'φ');
+	 cout << "cs9  :" << cs9 << endl;
+	 auto cs10 = cs8 - cs9;
+	 cout << "cs10  :" << cs10 << endl;
 
 	 cout << "Testing CharSet - done" << endl;
 }

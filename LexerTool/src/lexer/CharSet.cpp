@@ -8,6 +8,7 @@
 #include "CharSet.h"
 #include <algorithm>
 #include <utility>
+#include "unicode.h"
 
 namespace Lexer {
 
@@ -191,6 +192,22 @@ std::wostream& operator<<(std::wostream& os, const CharSet& s){ //print
 			os << p.first;
 			os << "-";
 			os << p.second;
+			os << "]";
+		}
+	os << "}";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const CharSet& s){ //print
+	os << "{";
+	for (auto p : s.r)
+		if (p.first==p.second)
+			os << u8(p.first);
+		else{
+			os << "[";
+			os << u8(p.first);
+			os << "-";
+			os << u8(p.second);
 			os << "]";
 		}
 	os << "}";

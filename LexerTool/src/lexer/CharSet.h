@@ -21,6 +21,7 @@ public:
 	~CharSet() {};
 
 	bool has(Char c) const;
+	bool isEmpty() const;
 
 	static CharSet make();                //empty set
 	static CharSet make(Char c);          //singleton
@@ -32,6 +33,8 @@ private:
 	friend CharSet operator+(const CharSet& s0,const CharSet& s1); //set union
 	friend CharSet operator*(const CharSet& s0,const CharSet& s1); //set intersection
 	friend CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
+	friend bool    operator==(const CharSet& s0,const CharSet& s1); //set equality
+	friend bool    operator!=(const CharSet& s0,const CharSet& s1); //set equality
 
 	friend std::wostream& operator<<(std::wostream&, const CharSet& s); //print
 	friend std::ostream& operator<<(std::ostream&, const CharSet& s); //print
@@ -46,7 +49,9 @@ private:
 CharSet operator+(const CharSet& s0,const CharSet& s1); //set union
 CharSet operator-(const CharSet& s0,const CharSet& s1); //set difference
 CharSet operator*(const CharSet& s0,const CharSet& s1); //set intersection
-std::wostream& operator<<(std::wostream&, const CharSet& s); //print
+bool    operator==(const CharSet& s0,const CharSet& s1); //set equality
+bool    operator!=(const CharSet& s0,const CharSet& s1); //set equality
+//std::wostream& operator<<(std::wostream&, const CharSet& s); //print
 std::ostream& operator<<(std::ostream&, const CharSet& s); //print
 
 } /* namespace Lexer */

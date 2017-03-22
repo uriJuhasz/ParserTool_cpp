@@ -19,6 +19,10 @@ namespace Lexer {
 		return i!=r.end() && c>=i->first && c<=i->second;
 	}
 
+	bool CharSet::isEmpty() const{
+		return r.size()==0;
+	}
+
 	CharSet::CharSet() : CharSet(CPV()){}
 	CharSet::CharSet(Char c) : CharSet(c,c){}
 	CharSet::CharSet(Char c0,Char c1) : CharSet(CPV{CP(c0,c1)})
@@ -212,6 +216,12 @@ std::ostream& operator<<(std::ostream& os, const CharSet& s){ //print
 		}
 	os << "}";
 	return os;
+}
+bool operator==(const CharSet& s0,const CharSet& s1){ //set equality
+	return s0.r==s1.r;
+}
+bool operator!=(const CharSet& s0,const CharSet& s1){ //set equality
+	return !(s0.r==s1.r);
 }
 
 } /* namespace Lexer */

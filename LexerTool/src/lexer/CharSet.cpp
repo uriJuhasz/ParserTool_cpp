@@ -63,7 +63,7 @@ typedef std::vector<CP>      CPV;
 */
 inline CPV::const_iterator* selectMin(const CPV& r0,const CPV& r1,CPV::const_iterator& i0,CPV::const_iterator& i1){
 	assert(i0!=r0.end() || i1!=r1.end());
-	return (i1==r1.end() || i0->first<=i1->first) ? &i0 : &i1;
+	return (i1==r1.end() ) ? &i0 : (i0==r0.end()) ? &i1 : (i0->first<=i1->first) ? &i0 : &i1;
 }
 CharSet operator+(const CharSet& s0,const CharSet& s1){ //set union
 	const CPV& r0 = s0.r;

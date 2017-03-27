@@ -67,7 +67,7 @@ public:
 	virtual void next()        override;
 
 protected:
-	bool isEOL(T t) const = 0;
+	virtual bool isEOL(T t) const = 0;
 
 private:
 	bool invariant() const;

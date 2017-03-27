@@ -6,12 +6,18 @@
  */
 
 #include "CharSet.h"
+
 #include <algorithm>
 #include <utility>
-#include "unicode.h"
 #include <ostream>
 
-namespace parser::lexer{
+#include "unicode.h"
+#include "../Stream/IStream.h"
+
+namespace parser{
+namespace lexer{
+
+	using parser::stream::IBufferStream;
 
 	bool CharSet::has(Char c) const{//todo binary search
 		auto i=r.begin();
@@ -216,9 +222,9 @@ namespace parser::lexer{
 		return os;
 	}
 
-	CharSet parse(std::string s)
+	CharSet parse(IBufferStream<Char>& s)
 	{
-
+		return CharSet::make();
 	}
 
-} /* namespace Lexer */
+}} /* namespace Lexer */

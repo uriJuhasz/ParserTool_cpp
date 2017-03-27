@@ -17,8 +17,8 @@ int main(int argc, char* argv[]) {
 	for (auto a : args)
 		cout << "    " << (i++) << ":" << a << endl;
 
-//	cout << "Testing unicode" << endl;
-//	testUnicode();
+	cout << "Testing unicode" << endl;
+	testUnicode();
 	cout << "Testing unicode done" << endl;
 	cout << endl;
 
